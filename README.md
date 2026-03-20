@@ -27,3 +27,4 @@ click LOGIN or DELETE on them (yes it actually works now)
 
 ### special thanks
 special thanks to @idontlikebyfron and grok for making the logo (thanks grok for making the fire logo)
+made for funsies :D
