@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discord Token Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    
+    :root {
+      --bg: #202225;
+      --card: #2f3136;
+      --accent: #5865f2;
+      --green: #3ba55c;
+      --text: #dcddde;
+      --text-muted: #b9bbbe;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      width: 380px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      padding: 20px;
+      position: relative;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 { font-size: 20px; font-weight: 600; color: white; }
+
+    #settingsBtn {
+      background: none;
+      border: none;
+      color: #b9bbbe;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+    }
+
+    #settingsBtn:hover { background: #40444b; color: white; }
+
+    textarea {
+      width: 100%; height: 100px; background: var(--card); border: 1px solid #40444b;
+      border-radius: 8px; padding: 14px; color: var(--text); font-family: monospace; font-size: 13px; resize: vertical;
+    }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+    button {
+      flex: 1; padding: 13px; background: var(--accent); color: white; border: none;
+      border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer;
+    }
+    button:hover { background: #4752c4; }
+    #saveBtn { background: var(--green); }
+    #saveBtn:hover { background: #2e8b4a; }
+
+    .status { margin-top: 12px; text-align: center; font-size: 13.5px; min-height: 22px; font-weight: 500; }
+
+    .saved { margin-top: 24px; }
+    .saved h3 { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+
+    .token-list { max-height: 320px; overflow-y: auto; }
+
+    .token-item {
+      background: var(--card);
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pfp { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .info { flex: 1; overflow: hidden; }
+    .username { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .token-preview { font-family: monospace; font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .login-btn, .delete-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      background: #5865f2;
+      color: white;
+    }
+
+    .login-btn:hover { background: #4752c4; }
+
+    .delete-btn {
+      background: #f04747;
+      color: white;
+    }
+
+    .delete-btn:hover { background: #d03c3c; }
+
+    #settingsModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: #36393f;
+      width: 320px;
+      margin: 80px auto;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #b9bbbe;
+      cursor: pointer;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid #40444b;
+    }
+
+    .toggle-label { font-size: 15px; }
+    
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 24px;
+      background: #72767d;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .toggle-switch.on { background: #3ba55c; }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 20px; height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch.on::after { transform: translateX(22px); }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 11px;
+      color: #72767d;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Discord Token Login</h1>
+    <button id="settingsBtn">⚙️</button>
+  </div>
+
+  <textarea id="tokenInput" placeholder="paste your discord token here retard"></textarea>
+  
+  <div class="btn-row">
+    <button id="loginBtn">Login with Token</button>
+    <button id="saveBtn">Save Token</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="saved">
+    <h3>SAVED ACCOUNTS</h3>
+    <div class="token-list" id="savedTokens"></div>
+  </div>
+
+  <div class="footer">made by irresponsible people rethinking their life decisions 🙏😭</div>
+
+  <div id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Settings</span>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="toggle-container">
+        <span class="toggle-label">autosave after successful login</span>
+        <div id="autoSaveToggle" class="toggle-switch"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
